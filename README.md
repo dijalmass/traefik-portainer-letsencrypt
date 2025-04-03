@@ -10,15 +10,7 @@ This project sets up a Docker infrastructure with Traefik as a reverse proxy, Po
 
 ## Quick Start
 
-### 1. Create Docker Network
-
-First, create an external Docker network that will be used by Traefik:
-
-```bash
-docker network create traefik
-```
-
-### 2. Configure Environment Variables
+### 1. Configure Environment Variables
 
 Create the `.env` file with your specific configuration:
 
@@ -32,12 +24,12 @@ DASHBOARD_USER=your-username
 DASHBOARD_PASSWORD=your-password
 ```
 
-### 3. Start the Stack
+### 3. Run
 
-Launch the entire stack with Docker Compose:
+Launch the entire stack with this command:
 
 ```bash
-docker-compose up -d
+chmod +x install.sh && ./install.sh
 ```
 
 ## Components
