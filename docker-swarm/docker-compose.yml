@@ -1,12 +1,13 @@
 services:
   traefik:
-    container_name: traefik
     image: traefik:latest
     deploy:
+      mode: replicated
       replicas: 1
       restart_policy:
         condition: any
     command: 
+      - --providers.swarm.endpoint=tcp://127.0.0.1:2377
       - --certificatesresolvers.myresolver.acme.email=${EMAIL_ADDRESS}
     labels:
       - traefik.enable=true
@@ -31,20 +32,18 @@ services:
   
   portainer:
     image: portainer/portainer-ce
-    container_name: portainer
     deploy:
-      replicas: 1
+      mode: global  # Rodar em todos os nós do cluster Swarm
       restart_policy:
         condition: any
-    command: -H unix:///var/run/docker.sock
+    command: -H tcp://tasks.agent:9001
     labels:
       - traefik.enable=true
       - traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN_NAME}`)
       - traefik.http.routers.portainer.entrypoints=websecure
-      - traefik.http.services.portainer.loadbalancer.server.port=9000
       - traefik.http.routers.portainer.tls.certresolver=myresolver
+      - traefik.http.services.portainer.loadbalancer.server.port=9000
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
     networks:
       - traefik
