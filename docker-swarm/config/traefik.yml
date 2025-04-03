@@ -1,6 +1,6 @@
 api:
   dashboard: true
-  insecure: true # Desabilita o dashboard inseguro
+  insecure: true # ⚠️ Desative em produção!
 
 entryPoints:
   web:
@@ -27,5 +27,3 @@ certificatesResolvers:
       storage: /etc/letsencrypt/acme.json
       httpChallenge:
         entryPoint: web
-      # Uncomment this line to enable the TLS challenge just if your domain supports CAA records and you have configured them correctly.
-      # tlsChallenge: {} 

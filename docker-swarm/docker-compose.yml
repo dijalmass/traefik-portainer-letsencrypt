@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   traefik:
     image: traefik:latest
@@ -6,15 +8,12 @@ services:
       replicas: 1
       restart_policy:
         condition: any
-    command:
-      - --providers.swarm.endpoint=tcp://127.0.0.1:2377
-      - --certificatesresolvers.myresolver.acme.email=${EMAIL_ADDRESS}
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN_NAME}`)
-      - traefik.http.routers.traefik.entrypoints=websecure
-      - traefik.http.routers.traefik.service=api@internal
-      - traefik.http.routers.traefik.tls.certresolver=myresolver
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN_NAME}`)
+        - traefik.http.routers.traefik.entrypoints=websecure
+        - traefik.http.routers.traefik.service=api@internal
+        - traefik.http.routers.traefik.tls.certresolver=myresolver
     ports:
       - target: 80
         published: 80
@@ -28,20 +27,19 @@ services:
       - traefik_letsencrypt:/etc/letsencrypt
     networks:
       - traefik
-  
+
   portainer:
     image: portainer/portainer-ce
     deploy:
       mode: global  # Rodar em todos os nós do cluster Swarm
       restart_policy:
         condition: any
-    command: -H tcp://tasks.agent:9001
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN_NAME}`)
-      - traefik.http.routers.portainer.entrypoints=websecure
-      - traefik.http.routers.portainer.tls.certresolver=myresolver
-      - traefik.http.services.portainer.loadbalancer.server.port=9000
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN_NAME}`)
+        - traefik.http.routers.portainer.entrypoints=websecure
+        - traefik.http.routers.portainer.tls.certresolver=myresolver
+        - traefik.http.services.portainer.loadbalancer.server.port=9000
     volumes:
       - portainer_data:/data
     networks:
