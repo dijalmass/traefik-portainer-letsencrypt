@@ -20,13 +20,10 @@ entryPoints:
 providers:
   docker:
     exposedByDefault: false # Impede a exposição automática de containers
-    swarmMode: true # Habilita o modo swarm
 
 certificatesResolvers:
   myresolver:
     acme:
       storage: /etc/letsencrypt/acme.json
-      httpChallenge:
-        entryPoint: web
       # Uncomment this line to enable the TLS challenge just if your domain supports CAA records and you have configured them correctly.
       # tlsChallenge: {} 
