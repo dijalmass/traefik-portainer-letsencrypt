@@ -1,0 +1,10 @@
+http:
+  middleware:
+    https-only:
+      redirectScheme:
+        scheme: https
+
+dashboard-auth:
+  basicAuth:
+    users:
+      - '${DASHBOARD_USER}:${DASHBOARD_PASSWORD}'

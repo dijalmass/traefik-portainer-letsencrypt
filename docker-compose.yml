@@ -1,0 +1,53 @@
+services:
+  traefik:
+    image: traefik:v3
+    container_name: traefik
+    restart: always
+    command:
+      - '--api.dashboard=true'
+      - '--providers.docker=true'
+      - '--providers.file.filename=/etc/traefik/dynamic.yml'
+      - '--entrypoints.web.address=:80'
+      - '--entrypoints.websecure.address=:443'
+      - '--certificatesresolvers.myresolver.acme.tlschallenge=true'
+      - '--certificatesresolvers.myresolver.acme.email=${EMAIL_ADDRESS}'
+      - '--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json'
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - './letsencrypt:/letsencrypt'
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+      - './dynamic.yml:/etc/traefik/dynamic.yml'
+    networks:
+      - traefik
+    labels:
+      - traefik.http.routers.traefik-dash.rule=Host(`traefik.${DOMAIN_NAME}`)
+      - traefik.http.routers.traefik-dash.service=api@internal
+      - traefik.http.routers.traefik-dash.entrypoints=websecure
+      - traefik.http.routers.traefik-dash.tls.certresolver=myresolver
+      - traefik.http.routers.traefik-dash.middlewares=dashboard-auth@file
+  
+  portainer:
+    image: portainer/portainer-ce
+    container_name: portainer
+    restart: always
+    command: -H unix:///var/run/docker.sock
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.portainer.rule=Host(`portainer.${DOMAIN_NAME}`)
+      - traefik.http.routers.portainer.entrypoints=websecure
+      - traefik.http.services.portainer.loadbalancer.server.port=9000
+      - traefik.http.routers.portainer.tls.certresolver=myresolver
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external: true
+
+volumes:
+  portainer_data:
