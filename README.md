@@ -24,7 +24,7 @@ DASHBOARD_USER=your-username
 DASHBOARD_PASSWORD=your-password
 ```
 
-### 3. Run
+### 2. Run
 
 Launch the entire stack with this command:
 
