@@ -13,6 +13,9 @@ entryPoints:
 
   websecure:
     address: ":443"
+    http:
+      tls:
+        certResolver: myresolver
 
 providers:
   docker:
@@ -21,7 +24,5 @@ providers:
 certificatesResolvers:
   myresolver:
     acme:
-      email: ${EMAIL_ADDRESS}
       storage: /etc/letsencrypt/acme.json
-      httpChallenge:
-        entryPoint: websecure
+      tlsChallenge: {}

@@ -1,3 +1,2 @@
-acme.json
-letsencrypt/
+letsencrypt/acme.json
 .env*
