@@ -18,9 +18,8 @@ entryPoints:
         certResolver: myresolver
 
 providers:
-  docker:
-    exposedByDefault: false # Impede a exposição automática de containers
-    swarmMode: true # Habilita o modo swarm
+  swarm:
+    endpoint: "tcp://127.0.0.1:2377"
 
 certificatesResolvers:
   myresolver:
