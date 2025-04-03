@@ -6,16 +6,15 @@ services:
       replicas: 1
       restart_policy:
         condition: any
-    command: 
+    command:
       - --providers.swarm.endpoint=tcp://127.0.0.1:2377
       - --certificatesresolvers.myresolver.acme.email=${EMAIL_ADDRESS}
     labels:
       - traefik.enable=true
       - traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN_NAME}`)
       - traefik.http.routers.traefik.entrypoints=websecure
-      - traefik.http.routers.traefik.service=traefik@docker
+      - traefik.http.routers.traefik.service=api@internal
       - traefik.http.routers.traefik.tls.certresolver=myresolver
-      - traefik.http.services.traefik.loadbalancer.server.port=8080
     ports:
       - target: 80
         published: 80
