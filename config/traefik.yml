@@ -1,0 +1,27 @@
+api:
+  dashboard: true
+  insecure: true  # Desabilita o dashboard inseguro
+
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https  # Redireciona HTTP para HTTPS
+
+  websecure:
+    address: ":443"
+
+providers:
+  docker:
+    exposedByDefault: false  # Impede a exposição automática de containers
+
+certificatesResolvers:
+  myresolver:
+    acme:
+      email: ${EMAIL_ADDRESS}
+      storage: /etc/letsencrypt/acme.json
+      httpChallenge:
+        entryPoint: websecure

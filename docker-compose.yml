@@ -1,32 +1,25 @@
 services:
   traefik:
-    image: traefik:v3
     container_name: traefik
+    image: traefik:latest
     restart: always
-    command:
-      - '--api.dashboard=true'
-      - '--providers.docker=true'
-      - '--providers.file.filename=/etc/traefik/dynamic.yml'
-      - '--entrypoints.web.address=:80'
-      - '--entrypoints.websecure.address=:443'
-      - '--certificatesresolvers.myresolver.acme.tlschallenge=true'
-      - '--certificatesresolvers.myresolver.acme.email=${EMAIL_ADDRESS}'
-      - '--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json'
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN_NAME}`)
+      - traefik.http.routers.traefik.entrypoints=websecure
+      - traefik.http.routers.traefik.service=traefik@docker
+      - traefik.http.routers.traefik.tls.certresolver=myresolver
+      - traefik.http.services.traefik.loadbalancer.server.port=8080
     ports:
-      - '80:80'
-      - '443:443'
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
     volumes:
-      - './letsencrypt:/letsencrypt'
-      - '/var/run/docker.sock:/var/run/docker.sock:ro'
-      - './dynamic.yml:/etc/traefik/dynamic.yml'
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./config/traefik.yml:/etc/traefik/traefik.yml
+      - ./letsencrypt:/etc/letsencrypt
     networks:
       - traefik
-    labels:
-      - traefik.http.routers.traefik-dash.rule=Host(`traefik.${DOMAIN_NAME}`)
-      - traefik.http.routers.traefik-dash.service=api@internal
-      - traefik.http.routers.traefik-dash.entrypoints=websecure
-      - traefik.http.routers.traefik-dash.tls.certresolver=myresolver
-      - traefik.http.routers.traefik-dash.middlewares=dashboard-auth@file
   
   portainer:
     image: portainer/portainer-ce
